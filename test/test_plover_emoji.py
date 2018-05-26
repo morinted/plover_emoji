@@ -5,7 +5,13 @@ from plover_emoji import (
     get_emoji,
     find_emoji_by_phrase,
     get_emoji_phrase,
+    normalize,
 )
+
+def test_normalize():
+    assert normalize('clock430') == '430 clock'
+    assert normalize('kissing heart') == 'heart kissing'
+    assert normalize('clock 4:30') == '430 clock'
 
 def test_unicode_output_to_characters():
     assert unicode_output_to_characters('1f605') == '😅'
@@ -14,11 +20,11 @@ def test_unicode_output_to_characters():
 
 def test_get_emoji():
     # "open mouth & cold sweat" → "open mouth cold sweat"
-    assert get_emoji('smiling face with open mouth cold sweat') == '1f605'
+    assert get_emoji(normalize('smiling face with open mouth cold sweat')) == '1f605'
 
-    assert get_emoji('sweat smile') == '1f605'
-    assert get_emoji('family man woman boy boy') == '1f468-200d-1f469-200d-1f466-200d-1f466'
-    assert get_emoji('family mwbb') == '1f468-200d-1f469-200d-1f466-200d-1f466'
+    assert get_emoji(normalize('sweat smile')) == '1f605'
+    assert get_emoji(normalize('family man woman boy boy')) == '1f468-200d-1f469-200d-1f466-200d-1f466'
+    assert get_emoji(normalize('family mwbb')) == '1f468-200d-1f469-200d-1f466-200d-1f466'
 
 def test_find_emoji_by_phrase_success():
     assert find_emoji_by_phrase('I had a sweat smile') == ('😅', 'sweat smile')
@@ -52,10 +58,16 @@ def test_find_emoji_by_phrase_success():
     # Too far from the name:
     assert find_emoji_by_phrase('some cool heart eyes kissing') == ('😗', 'kissing')
 
+def test_find_emoji_by_phrase_order():
+    assert find_emoji_by_phrase('heart kissing')[0] == find_emoji_by_phrase('kissing heart')[0]
+
+def test_find_emoji_by_phrase_avoid_transposition():
+    # Returned "lock with pen" 🔏
+    assert find_emoji_by_phrase('okay with me') == None
 
 def test_find_emoji_by_phrase_failure():
-    # 75% similar so a false positive.
-    assert find_emoji_by_phrase('nope') == ('👃', 'nope')
+    # Nope used to return "Nose"
+    assert find_emoji_by_phrase('nope') == None
     # Too far off
     assert find_emoji_by_phrase('garbage') == None
     assert find_emoji_by_phrase('enchilada') == None
