@@ -3,24 +3,33 @@ import re
 from fuzzyset import FuzzySet
 import pkg_resources
 
-EMOJI_WORD_WHITELIST = re.compile('[A-Za-z0-10:\\-!? ]+\\Z')
+# Which words that a user stenos should we consider for emoji...
+# "clock 4:30" requires numbers and colon.
+# !, ? are also valid.
+EMOJI_WORD_WHITELIST = re.compile('[:A-Za-z\\d\\-!? ]+\\Z')
+NORMALIZE_RX = re.compile('[^A-Za-z\\d\\ \\-!?]')
+NUMBER = re.compile('(\\D+)(\\d+)')
+
+def normalize(phrase):
+    phrase = NORMALIZE_RX.sub('', phrase) # Remove symbols.
+    phrase = NUMBER.sub('\\1 \\2', phrase) # Separate numbers from words.
+    phrase = re.sub('  +', ' ', phrase) # Remove repeated spaces.
+    return ' '.join(sorted(phrase.split(' ')))
 
 def make_tokens(emoji_strategy: dict):
     name_to_unicode_output = {}
-    longest_name = ''
     for _, emoji in emoji_strategy.items():
-        name = re.sub("[^A-Za-z0-10 ]", "", emoji['name']) # Remove symbols.
-        name = re.sub(" +", " ", name) # Remove repeated spaces.
+        name = emoji['name']
         unicode_output = emoji['unicode_output']
         # :sweat_smile: --> sweat smile
         shortname = ' '.join(emoji['shortname'][1:-1].split('_'))
 
-        name_to_unicode_output[name] = unicode_output
-        name_to_unicode_output[shortname] = unicode_output
+        name_to_unicode_output[normalize(name)] = unicode_output
+        name_to_unicode_output[normalize(shortname)] = unicode_output
 
     # Manual aliases
     name_to_unicode_output['!'] = name_to_unicode_output['exclamation mark']
-    name_to_unicode_output['?'] = name_to_unicode_output['question mark']
+    name_to_unicode_output['?'] = name_to_unicode_output[normalize('question mark')]
     name_to_unicode_output['!!'] = name_to_unicode_output['double exclamation mark']
     name_to_unicode_output['!?'] = name_to_unicode_output['interrobang']
     name_to_unicode_output['?!'] = name_to_unicode_output['interrobang']
@@ -31,7 +40,7 @@ emoji_file = pkg_resources.resource_filename('plover_emoji', 'emoji_strategy.jso
 with open(emoji_file) as f:
     data = json.load(f)
     name_to_unicode_output = make_tokens(data)
-    fuzzy_emoji_set = FuzzySet(name_to_unicode_output.keys())
+    fuzzy_emoji_set = FuzzySet(name_to_unicode_output.keys(), use_levenshtein=False)
 
 def get_emoji(name):
     return name_to_unicode_output[name]
@@ -48,7 +57,7 @@ def find_emoji_by_phrase(phrase):
     for word in reversed(phrase):
         search = [word] + search
         query = ''.join(search)
-        best_match = fuzzy_emoji_set.get(query.strip())
+        best_match = fuzzy_emoji_set.get(normalize(query.strip()))
         if best_match:
             matches.append(
                 best_match[0] + (query,)
