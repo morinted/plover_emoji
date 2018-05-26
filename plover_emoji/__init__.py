@@ -1,6 +1,6 @@
 import json
 import re
-from fuzzyset import FuzzySet
+from simplefuzzyset import FuzzySet
 import pkg_resources
 
 # Which words that a user stenos should we consider for emoji...
@@ -40,7 +40,7 @@ emoji_file = pkg_resources.resource_filename('plover_emoji', 'emoji_strategy.jso
 with open(emoji_file) as f:
     data = json.load(f)
     name_to_unicode_output = make_tokens(data)
-    fuzzy_emoji_set = FuzzySet(name_to_unicode_output.keys(), use_levenshtein=False)
+    fuzzy_emoji_set = FuzzySet(name_to_unicode_output.keys())
 
 def get_emoji(name):
     return name_to_unicode_output[name]

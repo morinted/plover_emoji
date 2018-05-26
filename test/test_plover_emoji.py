@@ -54,6 +54,7 @@ def test_find_emoji_by_phrase_success():
     assert find_emoji_by_phrase('one-two punch punch') == ('👊', 'punch')
     assert find_emoji_by_phrase('he made a hand signal sign of the horns') == ('🤘', 'sign of the horns')
     assert find_emoji_by_phrase('I must not see no evil') == ('🙈', 'see no evil')
+    assert find_emoji_by_phrase('in our house we have boy girl man man family') == ('👨‍👨‍👧‍👦', 'boy girl man man family')
 
     # Too far from the name:
     assert find_emoji_by_phrase('some cool heart eyes kissing') == ('😗', 'kissing')
