@@ -24,6 +24,7 @@ Write the word then hit your stroke for emoji to convert:
 -  point up → ☝️
 -  kissing heart → 😘
 -  heart eyes cat → 😻
+-  ok hand tone 3 → 👌🏽
 
 The plugin can read your recent words to guess which words are the emoji:
 
@@ -31,3 +32,5 @@ The plugin can read your recent words to guess which words are the emoji:
 -  wanna play baseball → wanna play ⚾
 -  Wow!! → Wow‼️
 -  Say what?! → Say what⁉️
+
+Emoji names can be found on https://emojipedia.org/

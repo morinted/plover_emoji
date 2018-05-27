@@ -63,7 +63,7 @@ def test_find_emoji_by_phrase_order():
     assert find_emoji_by_phrase('heart kissing')[0] == find_emoji_by_phrase('kissing heart')[0]
 
 def test_find_emoji_by_phrase_avoid_transposition():
-    # Returned "lock with pen" 🔏
+    # Used to return "lock with pen" 🔏
     assert find_emoji_by_phrase('okay with me') == None
 
 def test_find_emoji_by_phrase_failure():
@@ -83,6 +83,8 @@ def test_get_emoji_phrase():
     assert get_emoji_phrase(['dog', '😁']) == ['dog']
     # Don't process newlines
     assert get_emoji_phrase([' cat', 'this\n' ]) == [' cat']
+    # Allow numbers
+    assert get_emoji_phrase(['30', ':', '4', 'clock ']) == ['clock ', '4', ':', '30']
 
     # Colon is okay
     family = [' family', ':', ' man', ' woman', ' boy']
