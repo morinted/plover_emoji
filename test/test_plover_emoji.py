@@ -9,7 +9,7 @@ from plover_emoji import (
 )
 
 def test_normalize():
-    assert normalize('clock430') == '430 clock'
+    assert normalize('Clock430') == '430 clock'
     assert normalize('kissing heart') == 'heart kissing'
     assert normalize('clock 4:30') == '430 clock'
 

@@ -11,6 +11,7 @@ NORMALIZE_RX = re.compile('[^A-Za-z\\d\\ \\-!?]')
 NUMBER = re.compile('(\\D+)(\\d+)')
 
 def normalize(phrase):
+    phrase = phrase.lower()
     phrase = NORMALIZE_RX.sub('', phrase) # Remove symbols.
     phrase = NUMBER.sub('\\1 \\2', phrase) # Separate numbers from words.
     phrase = re.sub('  +', ' ', phrase) # Remove repeated spaces.
