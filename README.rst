@@ -24,7 +24,7 @@ Write the word then hit your stroke for emoji to convert:
 -  point up → ☝️
 -  kissing heart → 😘
 -  heart eyes cat → 😻
--  ok hand tone 3 → 👌🏽
+-  tone 3 ok hand → 👌🏽
 
 The plugin can read your recent words to guess which words are the emoji:
 
