@@ -1,0 +1,3 @@
+[submodule "plover_emoji/emoji-toolkit"]
+	path = plover_emoji/emoji-toolkit
+	url = https://github.com/joypixels/emoji-toolkit
