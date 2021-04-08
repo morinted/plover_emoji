@@ -25,8 +25,10 @@ def make_tokens(emoji_strategy: dict):
         # :sweat_smile: --> sweat smile
         shortname = ' '.join(emoji['shortname'][1:-1].split('_'))
 
-        name_to_unicode_output[normalize(name)] = unicode_output
+        # Prioritize shortnames over nominal names.
+        # E.g. sunglasses should map to :sunglasses:, not :dark_sunglasses:
         name_to_unicode_output[normalize(shortname)] = unicode_output
+        name_to_unicode_output.setdefault(normalize(name), unicode_output)
 
     # Manual aliases
     name_to_unicode_output['!'] = name_to_unicode_output['exclamation mark']
@@ -34,9 +36,11 @@ def make_tokens(emoji_strategy: dict):
     name_to_unicode_output['!!'] = name_to_unicode_output['double exclamation mark']
     name_to_unicode_output['!?'] = name_to_unicode_output['interrobang']
     name_to_unicode_output['?!'] = name_to_unicode_output['interrobang']
+    name_to_unicode_output['winking'] = name_to_unicode_output['wink']
+    name_to_unicode_output['noodle'] = name_to_unicode_output['ramen']
     return name_to_unicode_output
 
-emoji_file = pkg_resources.resource_filename('plover_emoji', 'emoji_strategy.json')
+emoji_file = pkg_resources.resource_filename('plover_emoji', 'emoji-toolkit/emoji_strategy.json')
 
 with open(emoji_file) as f:
     data = json.load(f)

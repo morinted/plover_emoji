@@ -19,12 +19,14 @@ def test_unicode_output_to_characters():
     assert unicode_output_to_characters('1f468-200d-1f469-200d-1f466-200d-1f466') == '👨‍👩‍👦‍👦'
 
 def test_get_emoji():
-    # "open mouth & cold sweat" → "open mouth cold sweat"
-    assert get_emoji(normalize('smiling face with open mouth cold sweat')) == '1f605'
+    assert get_emoji(normalize('grinning face with sweat')) == '1f605'
 
     assert get_emoji(normalize('sweat smile')) == '1f605'
     assert get_emoji(normalize('family man woman boy boy')) == '1f468-200d-1f469-200d-1f466-200d-1f466'
     assert get_emoji(normalize('family mwbb')) == '1f468-200d-1f469-200d-1f466-200d-1f466'
+
+def test_unicode_13():
+    assert get_emoji(normalize('ninja')) == '1f977'
 
 def test_find_emoji_by_phrase_success():
     assert find_emoji_by_phrase('I had a sweat smile') == ('😅', 'sweat smile')
@@ -41,7 +43,8 @@ def test_find_emoji_by_phrase_success():
     assert find_emoji_by_phrase('pop some confetti') == ('🎊', 'confetti')
     assert find_emoji_by_phrase('I have a family woman woman boy') == ('👩‍👩‍👦', 'family woman woman boy')
     assert find_emoji_by_phrase('grin') == ('😁', 'grin')
-    assert find_emoji_by_phrase('dog') == ('🐕', 'dog')
+    assert find_emoji_by_phrase('dog') == ('🐶', 'dog')
+    assert find_emoji_by_phrase('dog 2') == ('🐕', 'dog 2')
     assert find_emoji_by_phrase('dog face') == ('🐶', 'dog face')
     assert find_emoji_by_phrase('stuck out tongue') == ('😛', 'stuck out tongue')
     assert find_emoji_by_phrase('canada') == ('🇨🇦', 'canada')
@@ -58,6 +61,23 @@ def test_find_emoji_by_phrase_success():
 
     # Too far from the name:
     assert find_emoji_by_phrase('some cool heart eyes kissing') == ('😗', 'kissing')
+
+def test_shortnames_have_priority():
+    """
+    We want shortnames (like :sunglasses:) to take priority over names (like :dark_sunglasses:, a.k.a. sunglasses).
+    """
+    assert find_emoji_by_phrase('sunglasses') == ('😎', 'sunglasses')
+    assert find_emoji_by_phrase('sunglasses dark') == ('🕶️', 'sunglasses dark')
+
+def test_overrides():
+    """
+    Sometimes the behavior is a little unexpected. E.g. noodle turns into poodle.
+
+    There are some custom overrides that we've placed.
+    """
+    assert find_emoji_by_phrase('winking') == ('😉', 'winking')
+    assert find_emoji_by_phrase('turkey') == ('🦃', 'turkey')
+    assert find_emoji_by_phrase('noodle') == ('🍜', 'noodle')
 
 def test_find_emoji_by_phrase_order():
     assert find_emoji_by_phrase('heart kissing')[0] == find_emoji_by_phrase('kissing heart')[0]
@@ -76,7 +96,7 @@ def test_find_emoji_by_phrase_failure():
 def test_find_emoji_by_phrase_words():
     assert find_emoji_by_phrase(['?']) == ('❓', '?')
     assert find_emoji_by_phrase(['!']) == ('❗', '!')
-    assert find_emoji_by_phrase([' you', ' are', ' a', ' dog']) == ('🐕', ' dog')
+    assert find_emoji_by_phrase([' you', ' are', ' a', ' dog']) == ('🐶', ' dog')
 
 def test_get_emoji_phrase():
     # Don't process other emoji
