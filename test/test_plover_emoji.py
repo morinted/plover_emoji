@@ -62,14 +62,22 @@ def test_find_emoji_by_phrase_success():
     # Too far from the name:
     assert find_emoji_by_phrase('some cool heart eyes kissing') == ('😗', 'kissing')
 
-def test_find_emoji_by_alias():
+def test_shortnames_have_priority():
     """
-    Some emoji don't have the best built-in aliases, so we need to make sure they behave how we want.
+    We want shortnames (like :sunglasses:) to take priority over names (like :dark_sunglasses:, a.k.a. sunglasses).
     """
-    assert find_emoji_by_phrase('ta-da') == ('🎉', 'ta-da')
-    assert find_emoji_by_phrase('tada') == ('🎉', 'tada')
     assert find_emoji_by_phrase('sunglasses') == ('😎', 'sunglasses')
     assert find_emoji_by_phrase('sunglasses dark') == ('🕶️', 'sunglasses dark')
+
+def test_overrides():
+    """
+    Sometimes the behavior is a little unexpected. E.g. noodle turns into poodle.
+
+    There are some custom overrides that we've placed.
+    """
+    assert find_emoji_by_phrase('winking') == ('😉', 'winking')
+    assert find_emoji_by_phrase('turkey') == ('🦃', 'turkey')
+    assert find_emoji_by_phrase('noodle') == ('🍜', 'noodle')
 
 def test_find_emoji_by_phrase_order():
     assert find_emoji_by_phrase('heart kissing')[0] == find_emoji_by_phrase('kissing heart')[0]

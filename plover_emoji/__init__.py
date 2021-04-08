@@ -36,6 +36,8 @@ def make_tokens(emoji_strategy: dict):
     name_to_unicode_output['!!'] = name_to_unicode_output['double exclamation mark']
     name_to_unicode_output['!?'] = name_to_unicode_output['interrobang']
     name_to_unicode_output['?!'] = name_to_unicode_output['interrobang']
+    name_to_unicode_output['winking'] = name_to_unicode_output['wink']
+    name_to_unicode_output['noodle'] = name_to_unicode_output['ramen']
     return name_to_unicode_output
 
 emoji_file = pkg_resources.resource_filename('plover_emoji', 'emoji-toolkit/emoji_strategy.json')
